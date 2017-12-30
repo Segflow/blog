@@ -1,0 +1,26 @@
+baseurl = "http://segflow.github.io/"
+title = "Segflow"
+theme = "vec"
+languageCode = "en-us"
+paginate = 10
+disqusShortname = "segflow.io"
+
+[menu]
+  # Shown in the side menu.
+  [[menu.main]]
+    name = "post"
+    weight = 0
+    url = "/post"
+    
+[params]
+  Keywords = "segflow, security, ctf, exploit, writeup, think.it"
+  Description = "Meher Assel aka Segflow personal blog"
+  Avatar = "img/avatar.jpg"
+  SelfIntro = "Let's pwn!"
+  Email = "asselmeher@gmail.com"
+
+  GithubID = "segflow"
+  #TwitterID = "Your Twitter ID"
+  FacebookID = "xGeek"
+  LinkedInID = "meher-assel-0122798a"
+  #GoogleplusID = "Your Googleplus ID"
