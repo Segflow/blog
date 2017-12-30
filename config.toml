@@ -1,4 +1,4 @@
-baseurl = "http://segflow.github.io/"
+baseurl = "https://segflow.github.io/"
 title = "Segflow"
 theme = "vec"
 languageCode = "en-us"
