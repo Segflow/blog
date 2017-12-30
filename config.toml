@@ -3,7 +3,8 @@ title = "Segflow"
 theme = "vec"
 languageCode = "en-us"
 paginate = 10
-disqusShortname = "segflow.io"
+disqusShortname = "segflow-io"
+googleAnalytics = "UA-111743535-1"
 
 [menu]
   # Shown in the side menu.

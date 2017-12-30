@@ -4,6 +4,7 @@ date = "2017-12-30T13:20:47+01:00"
 tags = ["ctf", "crypto", "writeup"]
 categories = ["writeup", "crypto"]
 author = "Assel meher"
+comments = true
 +++
 
 Recently I decided to start playing CTFs again, and since I needed some training before playing a real one, I decided to take a look at some recent CTFs in [CTFtime.org](https://ctftime.org/).
