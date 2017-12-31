@@ -1,27 +1,52 @@
 baseurl = "https://segflow.github.io/"
-title = "Segflow"
-theme = "vec"
+relativeURLs = true
 languageCode = "en-us"
-paginate = 10
+title = "Segflow"
 disqusShortname = "segflow-io"
-googleAnalytics = "UA-111743535-1"
+paginate = 5
+themesdir = "themes/"
+theme = "hugo-geo"
 
-[menu]
-  # Shown in the side menu.
-  [[menu.main]]
-    name = "post"
-    weight = 0
-    url = "/post"
-    
+
 [params]
-  Keywords = "segflow, security, ctf, exploit, writeup, think.it"
-  Description = "Meher Assel aka Segflow personal blog"
-  Avatar = "img/avatar.jpg"
-  SelfIntro = "Let's pwn!"
-  Email = "asselmeher@gmail.com"
+	# Render the rotating globe in the sidebar
+	showglobe = true
 
-  GithubID = "segflow"
-  #TwitterID = "Your Twitter ID"
-  FacebookID = "xGeek"
-  LinkedInID = "meher-assel-0122798a"
-  #GoogleplusID = "Your Googleplus ID"
+	# Include favicon
+	favicon = "favicon.ico"
+ 	
+	# Google Analytics
+	analytics = "UA-111743535-1"
+
+	# Email (optional)
+	email = "asselmeher@gmail.com"
+	
+	# Header Title for the main page
+	header = "Let's pwn!"
+	
+	# Sidebar profile picture
+	profilepic = "img/hacker_emblem.png"
+	
+	# Title/subtitle for the sidebar
+	title = "Segflow"
+	subtitle = "Assel Meher"
+	
+	# Social buttons for sidebar
+	# Each of these are optional
+	[[params.socialbuttons]]
+	faicon = "github"
+	url = "https://github.com/segflow"
+	[[params.socialbuttons]]
+	faicon = "linkedin"
+	url = "meher-assel-0122798a"
+
+
+	# Nav links below the profile picture
+	[[params.navlinks]]
+	name = "Home"
+	url = "/"
+	
+	[[params.navlinks]]
+	name = "Posts"
+	url = "post/"
+	
