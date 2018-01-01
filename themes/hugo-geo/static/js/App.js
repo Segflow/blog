@@ -63,14 +63,14 @@ $(document).ready(function() {
 		var width = $('#menu').outerWidth(true);
 	   	var height = $('#menu').outerHeight(true);
 		var rotate = [-40];
-	    var velocity = [0.0005];
+	    var velocity = [0.001];
 	
 		var projection = d3.geo.orthographic()
 			.scale(1100)
 			.translate([150, 1000])
 			.rotate([0])
 			.clipAngle(90)
-			.precision(0.1);
+			.precision(0.02);
 	
 		var path = d3.geo.path()
 			.projection(projection);
