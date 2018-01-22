@@ -9,11 +9,11 @@ draft = false
 index = true
 +++
 
-In this challenge we are given a service IP and PORT, to which we can connect using `netcat` or any similar tool. We are also provided with a `tar` file that contains the service binary file and some `.so` modules.
+In this challenge we are given a service IP and PORT, to which we can connect using `netcat` or any similar tool. We are also provided with a `tar` file that contains the service binary and some `.so` modules.
 
 <!--more-->
 
-The task description was the following:
+The task description is the following:
 
 > Wrapping gifts is now even more fun! Gift Wrapping Factory 2.0:
 > 
@@ -84,11 +84,11 @@ Wow! This looks so beautiful
 > 
 ```
 
-The `modinfo` command print some info about loaded module and it's base address. Probably this is about the `giftwrapper2.so` found in challenge files.
+The `modinfo` command print some info about loaded module and it's base address. Probably this is about the `giftwrapper2.so` found in the challenge files.
 
-The wrap command ask as about the size of the gift and the gift content, after that a nice ascii art is shown containing the gift message.
+The `wrap` command asks as about the size of the gift and the gift content, after that a nice ascii art is shown containing the gift message.
 
-Since the gift message is printed back to us, I thought it will be good to test if there is a `format string` vulnerability. Turns out there wasn't.
+Since the gift message is printed back to us, I thought it will be a good idea to test if there is a `format string` vulnerability. Turns out there wasn't.
 
 ```shell
 > wrap
@@ -138,7 +138,7 @@ Humm it gets truncated, we are also not allowed to have very big gift messages. 
 
 Now that we understand what the server is doing, let's check the source file.
 
-The server code is very straightforward,
+The server code found in `server.c` is very straightforward,
 
 - Setup a socket
 - Load module
