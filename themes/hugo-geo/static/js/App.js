@@ -87,27 +87,24 @@ $(document).ready(function () {
 		var land = topojson.feature(world, world.objects.land),
 			borders = topojson.feature(world, world.objects.countries);
 
-		d3.timer(function (elapsed) {
+
+		var drawMap = function () {
 			elapsed = 0
 			context.clearRect(0, 0, width, height);
-
 			projection.rotate([rotate[0] + velocity * elapsed, 0]);
 			context.beginPath();
 			path(land);
+			context.fillStyle = "#fff";
 			context.fill();
 
 			context.beginPath();
 			path(borders);
 			context.lineWidth = .5;
-			context.strokeStyle = "#fff";
+			context.strokeStyle = "#000";
 			context.stroke();
+		}
 
-			context.beginPath();
-			context.arc(width / 2, height / 2, radius, 0, 2 * Math.PI, true);
-			context.lineWidth = 2.5;
-			context.stroke();
-		});
-
+		drawMap()
 
 		d3.select(self.frameElement).style("height", height + "px");
 
@@ -116,6 +113,7 @@ $(document).ready(function () {
 			var h = $('#menu').outerHeight(true);
 			context.clearRect(0, 0, width, height);
 			canvas.attr("width", w).attr("height", h);
+			drawMap()
 		}
 		window.onresize = updateWindow;
 	});
