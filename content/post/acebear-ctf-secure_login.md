@@ -115,7 +115,7 @@ The logic behind the pass generation is this one, It can easily be spotted becau
 
 With some assembly skills, we can re-write it using this pseudo code:
 
-```
+```python
 s = 0x0  # 0x080489b8  mov     dword [ebp-0x24], 0x0
 i = 0    # 0x080489bf  mov     dword [ebp-0x28], 0x0
 while i <= 15:
@@ -123,7 +123,7 @@ while i <= 15:
     b = rand() & 0xffff
     x = a XOR b XOR s
 
-    d = 0x804b0c0                   # 0x080489e5  add     eax, 0x804b0c0
+    d = 0x804b0c0  # 0x080489e5  add     eax, 0x804b0c0
     c = strtoul(d[i*4, i*4+4], 16)  # what's d??!
     r = (x + 1) * c + x
 
