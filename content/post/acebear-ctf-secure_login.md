@@ -190,7 +190,7 @@ correct = [0xF056, 0x64E9, 0x83F5, 0x4E5F, 0xA6D5, 0xD4FF, 0xC5BF, 0x9307,
 
 At this point we have all the data needed to come up with an input that, when processed by the algorithm, the result bytes should be equal to `correct`.
 
-You can do that manually if you are good at maths, or use a Theorem Prover like `z3` to do that. I'm bad at math, so you can guess what approach I chose.
+You can do that manually if you are good at maths, or use a Theorem Prover like [z3](https://github.com/Z3Prover/z3) to do that. I'm bad at math, so you can guess what approach I chose.
 
 The final code is the following:
 
