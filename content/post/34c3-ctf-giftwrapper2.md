@@ -346,12 +346,12 @@ Now we only need a `pop rdi` gadget. By using `radare2` we can get that, below w
 ```shell
 $ radare2 server
 [0x00400dc0]> /Rl pop rdi
-0x00401550: pop rdi; ret;
+0x00401550: pop rdi; ret; 
 0x004015c3: pop rdi; ret;
 [0x00400dc0]> 
 ```
 
-The following python code connect to server, interact with it and then send our rop chain. I'am using [Pwntools](https://github.com/Gallopsled/pwntools) to do this, since it makes network programming much more easy and funny.
+The following python code connect to server, interact with it and then send our rop chain. I'm using [Pwntools](https://github.com/Gallopsled/pwntools) to do this, since it makes network programming much more easy and funny.
 
 ```python
 from pwn import *
