@@ -172,9 +172,9 @@ libc.srand(seed)
 
 Now every time we call `libc.rand()` we will get the same random number the server will get, this allowing us to leak the value of key, 4 bytes each time. After the first iteration, **s** will no longer contains null, it will contains the first leaked 4 bytes. Again to leak the second 4 bytes, we need to nullify the value of **x**, to do so we just need to have the value of the second 4 bytes of the input equal to `b XOR s`, 
 
-> x `=` (b XOR s) `XOR` b `XOR` s 
+> x `=` (b `XOR` s) `XOR` b `XOR` s 
 > 
-> x `=` b XOR s `XOR` b `XOR` s
+> x `=` b `XOR` s `XOR` b `XOR` s
 >
 > x `=` 0
 
