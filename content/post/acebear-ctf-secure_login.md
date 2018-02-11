@@ -109,7 +109,7 @@ So the function `generate_password` will receive our typed password as an argume
 
 So, in order to solve this we need to reverse engineer the `generate_password` function so we can control its result and pass the `strcmp` check.
 
-The logic behind the pass generation is this one, It can easily be spotted because of the loop.
+The following loop can easily be spotted, by reading it carefully we knew that the password generation happens here:
 {{< figure src="/img/acebear-ctf-2018/safe_login-binja-generate-hash.png" width="100%" >}}
 <br/>
 
@@ -135,21 +135,23 @@ endwhile
 return result
 ```
 
-Mainly we loop over the user_input, taking 4 bytes each time and converting them to a long integer by calling `strtoul`. Remember that the user input should only contain hexadecimal characters, that's why the second argument to `strtoul`, the `base` argument, is 16.
+Mainly we loop over the user_input, taking 4 bytes each time and converting them to a long integer by calling `strtoul`. Remember that the user input should only contain hexadecimal characters, that's why the third argument to [strtoul](http://www.cplusplus.com/reference/cstdlib/strtoul/), the `base` argument, is 16.
 
-The only unknown value here is the value of `d`, by following the cross references of the address `0x804b0c0`, I found that, when the program starts, in addition to printing the hello message, a file with the name `key` is opened and its content is read into the address `0x804b0c0`.
+The only unknown value here is the value of `d`, by following the cross references of the address **0x804b0c0**, I found that, when the program starts, in addition to printing the hello message, a file with the name `key` is opened and its content is read into the address **0x804b0c0**.
 
 Humm, we do not have the `key` file, so at this point I started looking for a way to leak it. Fortunately, the programs prints the generated password even though it does not match the correct one, and with that fact we can craft a special input so that the generated password that will get printed is in fact the `key`. 
 
-Basically we need to make the generation algorithm only depends on the `key` and nothing else. To get rid of the influence of the other variables `a` and `b` we can simply force `a` to be equal to the value of `b` so that the value of `x` will be:
+Basically we need to make the generation algorithm only depends on the `key` and nothing else, which means nullify the value of `x`. Since at the start `s` is null, we can nullify the value of `x` simply by forcing `a` to be equal to the value of `b` so that the value of `x` will be:
 
 > x `=` b `XOR` b `XOR` s 
 > 
 > x `=` s (because b `XOR` b `=` 0)
+>
+> x `=` 0 (because b `XOR` b `=` 0)
 
-We know that, in the first iteration `s` is equal to 0, which means that `x` is 0, which also means that `r` is in fact equal to `c` (the first 4 bytes of the key). And just like that we are able to leak the first 4 bytes of the key, simply by forcing `a` to be equal to `b`.
+We know that, in the first iteration **s** is equal to 0, which means that **x** is 0, which also means that **r** is in fact equal to **c** (the first 4 bytes of the key). And just like that we are able to leak the first 4 bytes of the key, simply by forcing **a** to be equal to **b**.
 
-Since we know the time of the server, we can locally use `srand` to seed the random number generator with the server time, so we can predict the random numbers(huh? is it random?!) that will be used by the server. 
+Since we know the time of the server (UTC+0-), we can locally use `srand` to seed the random number generator with the server time, so we can predict the random numbers(huh? is it random?!) that will be used by the server. 
 
 `srand` and `rand` are both part of the c library `libc`, but we can also use them in python through the `ctypes` module.
 
@@ -164,14 +166,19 @@ libc = CDLL("libc.so.6")
 r = remote("securelogin.acebear.site", 5001)
 
 # Wait for the hello message and get the server time
-date_text = r.recvuntil("2018").split('\n')[-1][22:]
-date = datetime.datetime.strptime(date_text, "%d %H:%M:%S %Y")
-server_timestamp = calendar.timegm(date.timetuple())
-seed = server_timestamp
+seed = libc.time()
 libc.srand(seed)
 ```
 
-Now every time we call `libc.rand()` we will get the same random number the server will get, this allowing us to leak the value of key (will leave this as an exercise for the reader).
+Now every time we call `libc.rand()` we will get the same random number the server will get, this allowing us to leak the value of key, 4 bytes each time. After the first iteration, **s** will no longer contains null, it will contains the first leaked 4 bytes. Again to leak the second 4 bytes, we need to nullify the value of **x**, to do so we just need to have the value of the second 4 bytes of the input equal to `b XOR s`, 
+
+> x `=` (b XOR s) `XOR` b `XOR` s 
+> 
+> x `=` b XOR s `XOR` b `XOR` s
+>
+> x `=` 0
+
+Which lets us leak the second 4bytes on the key. By continuing with the same trick we can leak the full key, To make the post short, I will leave this as an exercise for the reader.
 
 The leaked key bytes are:
 
@@ -188,12 +195,31 @@ correct = [0xF056, 0x64E9, 0x83F5, 0x4E5F, 0xA6D5, 0xD4FF, 0xC5BF, 0x9307,
 ```
 
 
-At this point we have all the data needed to come up with an input that, when processed by the algorithm, the result bytes should be equal to `correct`.
+At this point we have all the data needed to come up with an input that, when processed by the algorithm, the result bytes should be equal to **correct**.
 
 You can do that manually if you are good at maths, or use a Theorem Prover like [z3](https://github.com/Z3Prover/z3) to do that. I'm bad at math, so you can guess what approach I chose.
 
 The final code is the following:
 
 {{< gist segflow 034e7747ead98ce751939da33cc450e9 >}}
+
+And we run it:
+```shell
+**************************Welcome to secure login**************************
+*                                                                         *
+*************************Challenge Created By CNV**************************
+*   Team: AceBear                                                         *
+*   My blog: https://chung96vn.blogspot.com/                              *
+***************************************************************************
+Current time: Sun Feb 11 08:26:06 2018
+
+Give me your name: Welcome: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Gime me your password: Generated password: F05664E983F54E5FA6D5D4FFC5BF930743F60D8FC2C78AFBB0AF7C82664F2043
+Congratulations!
+This is flag: AceBear{thi5_i5_fl4g_f0r_y0u}
+
+[*] Got EOF while reading in interactive
+$ 
+```
 
 Flag: **AceBear{thi5_i5_fl4g_f0r_y0u}**
