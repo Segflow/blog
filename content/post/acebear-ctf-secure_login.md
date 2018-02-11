@@ -147,7 +147,7 @@ Basically we need to make the generation algorithm only depends on the `key` and
 > 
 > x `=` s (because b `XOR` b `=` 0)
 >
-> x `=` 0 (because b `XOR` b `=` 0)
+> x `=` 0
 
 We know that, in the first iteration **s** is equal to 0, which means that **x** is 0, which also means that **r** is in fact equal to **c** (the first 4 bytes of the key). And just like that we are able to leak the first 4 bytes of the key, simply by forcing **a** to be equal to **b**.
 
