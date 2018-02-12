@@ -38,7 +38,7 @@ theme = "hugo-geo"
 	url = "https://github.com/segflow"
 	[[params.socialbuttons]]
 	faicon = "linkedin"
-	url = "meher-assel-0122798a"
+	url = "https://www.linkedin.com/in/meher-assel-0122798a"
 
 
 	# Nav links below the profile picture
