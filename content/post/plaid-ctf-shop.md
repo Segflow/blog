@@ -1,6 +1,6 @@
 +++
 title = "PlaidCTF: Shop (pwn)"
-date = "2018-01-30T21:12:11+01:00"
+date = "2018-05-06T20:17:33+01:00"
 tags = ["writeup", "ctf", "pwn"]
 categories = ["writeup", "pwn"]
 comments = true
