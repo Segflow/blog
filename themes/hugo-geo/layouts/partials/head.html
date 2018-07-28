@@ -18,7 +18,13 @@
     <meta property="og:tags" content="{{ . }}">
     {{ end }}
     {{ .Hugo.Generator }}
+
+    {{ if .IsPage }}
     <title>{{ .Title }} &middot; {{ .Site.Title }}</title>
+    {{ else }}
+    <title>{{ .Site.Params.header }} &middot; {{ .Site.Title }}</title>
+    {{ end }}
+
     {{ range .Params.css }}
     <link rel="stylesheet" href="{{ . }}">
     {{ end }}
