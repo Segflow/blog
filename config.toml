@@ -39,7 +39,9 @@ theme = "hugo-geo"
 	[[params.socialbuttons]]
 	faicon = "linkedin"
 	url = "https://www.linkedin.com/in/meher-assel-0122798a"
-
+	[[params.socialbuttons]]
+	faicon = "twitter"
+	url = "https://twitter.com/segfl0w"
 
 	# Nav links below the profile picture
 	[[params.navlinks]]
