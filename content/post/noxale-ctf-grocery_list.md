@@ -26,7 +26,7 @@ The task description is the following:
 > [Challenge files](/ctf-files/34c3-ctf-2017/noxale-ctf-2018/GroceryList)
 
 
-{{< tweet 1038878513959452672 >}}
+{{< tweet 1038879867725651968 >}}
 
 
 
@@ -279,8 +279,7 @@ Using [libc_search](https://libc.blukat.me/) we now know that the libc being use
 Now we just need to place `__free_hook` in `items[0]` using the same trick as before, and edit it to write the address of `system`.
 
 
-The following python code connect to server, interact with it to chain a serie of events that will spawn a shell at the end. I'm using [Pwntools](https://github.com/Gallopsled/pwntools) to do this, since it makes network programming much more easy and funny.
-
+The following python code is the final exploit. I'm using [Pwntools](https://github.com/Gallopsled/pwntools) to do this, since it makes network programming much more easy and funny.
 
 
 {{< gist segflow a7142d7e3b866c3577ab8a08ea0c3b9c >}}
