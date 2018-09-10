@@ -9,7 +9,7 @@ draft = false
 index = true
 +++
 
-In this challenge we are given a service IP and PORT, to which we can connect using `netcat` or any similar tool. 
+In this challenge, we are given a service IP and PORT, to which we can connect using `netcat` or any similar tool. 
 We are also provided with an `ELF` file.
 
 <!--more-->
@@ -116,13 +116,13 @@ do {
 } while ( choice != 7 );
 ```
 
-At maximun we can only have 20 items, which are `malloc`'ed and stored in a global array that resides within the `.bss` segment of the binary.
+At maximum, we can only have 20 items, which are `malloc`'ed and stored in a global array that resides within the `.bss` segment of the binary.
 
 There is 3 types of items: `small = 0x10`, `medium = 0x38`, and `large = 0x60`.
 
-We notice that all the sizes are within the `fastbin` size range, so we will be dealing with fastbin chunks only. Now we understand why the word **FASTEST** was in bold in the challenge description ;).
+We notice that all the sizes are within the `fast bins` size range so we will be dealing with fast bins only. Now we understand why the word **FASTEST** was in bold in the challenge description ;).
 
-Content reading is done using `gets`, which is known to be unsecure, because it doens't do any bound check. This allows us to write out of the malloc'ed item  chunks and thus overwriting stuff.
+Content reading is done using `gets`, which is known to be insecure because it doesn't do any bound check. This allows us to write out of the malloc'ed item chunks and thus overwriting stuff.
 
 
 # Fastbin Attack
@@ -131,7 +131,7 @@ Based on the information we have, and what we can do, we can see that this is a 
 
 But since `PIE` and `ASLR` are enabled, we need to defeat them first by leaking some addresses.
 
-We know that `smallbins` will have a pointer to `main_arena` in their **FD** and **BK** pointers once free'ed, so if we manage to craft a fake `smallbin`, free it and then create a new empty item, the item will be located in the same region as the previously free'ed fake smallbin, so by printing the item we would have leaked a `libc` address. To do so, we can overwrite into a chunk metadata to corrupt it's `size` field and make it looks like a `smallbin`.
+We know that `small bins` will have a pointer to `main_arena` in their **FD** and **BK** pointers once free'ed, so if we manage to craft a fake `smallbin`, free it and then create a new empty item, the item will be located in the same region as the previously free'ed fake smallbin, so by printing the item we would have leaked a `libc` address. To do so, we can overwrite into a chunk metadata to corrupt it's `size` field and make it looks like a `smallbin`.
 
 The function I used to do the leak looks as follow:
 
@@ -180,28 +180,28 @@ Now our fastbin contains this:
 0x80: 0x0
 ```
 
-Since **FD** needs to point to a valid fastbin chunk that have the size 0x20, this will put some limitations to what we can write, the validation check done by `libc` is as follow:
+Since **FD** needs to point to a valid fastbin chunk that has the size 0x20, this will put some limitations to what we can write, the validation check done by `libc` is as follow:
 
-- if a chunk `A` is in fastbin list of size `X`, then `A->size >> 4 - 2` needs to be equal to `X`
+- if a chunk `A` is in a fastbin list of size `X`, then `A->size >> 4 - 2` needs to be equal to `X`
 
 This looks like a hard condition to fulfill, but it's pretty easy to find such a valid fake chunk. Since the `size` field is at offset `8` of the struct, we need to find an address `A` such as the data at `A + 8` contains a valid chunk size.
 
-powered by `gdb` I did found a valid address that fullfill that condition. And guess what? it's only 3 bytes far from the global `items_list` array
+powered by `gdb` I did find a valid address that fulfills that condition. And guess what? it's only 3 bytes far from the global `items_list` array
 
 ```
 pwndbg> x/5gx 0x55555575602d
-0x55555575602d:	0xaaab0978e0000000	0x000000000000002a
-0x55555575603d:	0x5555758430000000	0x55557584c0000055
-0x55555575604d:	0x5555758530000055
+0x55555575602d:    0xaaab0978e0000000    0x000000000000002a
+0x55555575603d:    0x5555758430000000    0x55557584c0000055
+0x55555575604d:    0x5555758530000055
 pwndbg> x/10gx 0x5555557584c0 
-0x5555557584c0:	0x0041414141414141	0x0000000000000021 <- item 6
-0x5555557584d0:	0x00002aaaab097b78	0x00002aaaab097b78
-0x5555557584e0:	0x0000000000000000	0x0000000000000021 <- item 7 (0x5555557584f0 is what we want to corrupt)
-0x5555557584f0:	0x0000000000000000	0x00002aaaab097ba8
-0x555555758500:	0x0000000000000000	0x0000000000000021
+0x5555557584c0:    0x0041414141414141    0x0000000000000021 <- item 6
+0x5555557584d0:    0x00002aaaab097b78    0x00002aaaab097b78
+0x5555557584e0:    0x0000000000000000    0x0000000000000021 <- item 7 (0x5555557584f0 is what we want to corrupt)
+0x5555557584f0:    0x0000000000000000    0x00002aaaab097ba8
+0x555555758500:    0x0000000000000000    0x0000000000000021
 ```
 
-With that we can edit the 6'th item to corrupt the **FD** of the 7th item.
+With that, we can edit the 6'th item to corrupt the **FD** of the 7th item.
 
 ```python
 fake_fast_chunk = pie_base + 0x20202d
@@ -222,11 +222,11 @@ pwndbg> fastbins
 0x70: 0x0
 0x80: 0x0
 pwndbg> x/10gx 0x5555557584c0
-0x5555557584c0:	0x0000000000000000	0x0000000000000021 <- item 6
-0x5555557584d0:	0x4242424242424242	0x4242424242424242
-0x5555557584e0:	0x0000000000000000	0x0000000000000021 <- item 7
-0x5555557584f0:	0x000055555575602d	0x00002aaaab097b00
-0x555555758500:	0x0000000000000000	0x0000000000000021
+0x5555557584c0:    0x0000000000000000    0x0000000000000021 <- item 6
+0x5555557584d0:    0x4242424242424242    0x4242424242424242
+0x5555557584e0:    0x0000000000000000    0x0000000000000021 <- item 7
+0x5555557584f0:    0x000055555575602d    0x00002aaaab097b00
+0x555555758500:    0x0000000000000000    0x0000000000000021
 ```
 
 Now if we allocate 2 new items (small size), the second one will be at our fake chunk. Since our fake chunk is 3 bytes before the global `items_list` array, by editing it we will place fake addresses in the `items_list`.
@@ -274,12 +274,11 @@ Running it we get:
 [*] getchar : 0x2aaaaad49160
 ```
 
-Using [libc_search](https://libc.blukat.me/) we now know that the libc being used is 2.23-ubuntu, and that the offsets of `system` and `__free_hook` are `0x45390` and `0x3c67a8` respectively. 
+Using [libc_search](https://libc.blukat.me/) we now know that the libc being used is 2.23-ubuntu and that the offsets of `system` and `__free_hook` are `0x45390` and `0x3c67a8` respectively. 
 
-Now we just need to place `__free_hook` in `items[0]` using the same trick as before, and edit it to write the address of `system`.
+Now we just need to place `__free_hook` in `items[0]` using the same trick as before and edit it to write the address of `system`.
 
-
-The following python code is the final exploit. I'm using [Pwntools](https://github.com/Gallopsled/pwntools) to do this, since it makes network programming much more easy and funny.
+The following python code is the final exploit. I'm using [Pwntools](https://github.com/Gallopsled/pwntools) to do this since it makes network programming much more easy and funny.
 
 
 {{< gist segflow a7142d7e3b866c3577ab8a08ea0c3b9c >}}
