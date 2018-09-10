@@ -23,6 +23,7 @@ The task description is the following:
 > Go check it out.
 
 > nc chal.noxale.com 1232
+
 > [Challenge files](/ctf-files/34c3-ctf-2017/noxale-ctf-2018/GroceryList)
 
 
