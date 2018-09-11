@@ -9,7 +9,7 @@ draft = false
 index = true
 +++
 
-In this challenge we are given a service IP and PORT, to which we can connect using `netcat` or any similar tool. We are also provided with a `tar` file that contains the service binary and some `.so` modules.
+In this challenge, we are given a service IP and PORT, to which we can connect using `netcat` or any similar tool. We are also provided with a `tar` file that contains the service binary and some `.so` modules.
 
 <!--more-->
 
@@ -36,7 +36,7 @@ drwxr-xr-x  8 segflow  staff      256 Jan  3 13:52 ..
 
 `server` is the challenge binary, `server.c` is its code. `libc-2.26.so` is the libc library used by the server.
 
-Before understanding the code or the purpose of `giftwrapper2.so` file, let's try to interact with the service to get an overall understanding what it's doing. Since the CTF server went down after the competition, we will run the server locally and interact with it.
+Before understanding the code or the purpose of `giftwrapper2.so` file, let's try to interact with the service to get an overall understanding of what it's doing. Since the CTF server went down after the competition, we will run the server locally and interact with it.
 
 ```shell
 $ nc localhost 12345
@@ -46,9 +46,9 @@ $ nc localhost 12345
 Welcome to the new gift wrapping service!
 Type "help" for help :)
 > help
-wrap 				(Wrap a gift)
-help 				(Show this information)
-modinfo 			(Show information about the loaded module)
+wrap                 (Wrap a gift)
+help                 (Show this information)
+modinfo             (Show information about the loaded module)
 > 
 ```
 
@@ -56,9 +56,9 @@ A menu is shown, and we can print the `help` message, `wrap` a gift and print so
 
 ```shell
 > help
-wrap 				(Wrap a gift)
-help 				(Show this information)
-modinfo 			(Show information about the loaded module)
+wrap                 (Wrap a gift)
+help                 (Show this information)
+modinfo             (Show information about the loaded module)
 > modinfo
 ************************************
 Information about the loaded module:
@@ -85,7 +85,7 @@ Wow! This looks so beautiful
 
 The `modinfo` command prints some info about the loaded module and its base address. Probably this is about the `giftwrapper2.so` found in the challenge files.
 
-The `wrap` command asks about the size of the gift and the gift text, after that a nice ascii art is shown containing the gift message.
+The `wrap` command asks about the size of the gift and the gift text after that a nice ascii art is shown containing the gift message.
 
 Since the gift message is printed back to us, I thought it will be a good idea to test if there is a `format string` vulnerability. Turns out there wasn't.
 
@@ -173,7 +173,7 @@ void load_module() {
 }
 ```
 
-Mainly it loads the `giftwrapper2.so` module, calls `initialize_module` within that module and pass the `register_command` as its second argument. After that it registers two commands `help` and `modinfo`.
+Mainly it loads the `giftwrapper2.so` module, calls `initialize_module` within that module and pass the `register_command` as its second argument. After that, it registers two commands `help` and `modinfo`.
 
 So probably the `wrap` command is registered by the module itself.
 
@@ -202,7 +202,7 @@ Even though it sounds secure, it's not. The flaw is within this block, can you s
 0x870: jg 0x94c            ; jump to 0x94c if greater
 ```
 
-The conditional jump is done using the `jg` instruction which is used for **signed** comparison. Check this nice page to better understand [x86-jumps](http://unixwiz.net/techtips/x86-jumps.html). But the `read` function interpret its argument as an unsigned integer, which mean if, when prompted for the size, we type `-1` (**0xffffffff** in hex) we can bypass the check against **0x63**. This is possible because **0xffffffff < 0x63** when they are interpreted as *signed* numbers. 
+The conditional jump is done using the `jg` instruction which is used for **signed** comparison. Check this nice page to better understand [x86-jumps](http://unixwiz.net/techtips/x86-jumps.html). But the `read` function interprets its argument as an unsigned integer, which means if, when prompted for the size, we type `-1` (**0xffffffff** in hex) we can bypass the check against **0x63**. This is possible because **0xffffffff < 0x63** when they are interpreted as *signed* numbers. 
 
 Later when we reach the `read` function, **0xffffffff** is interpreted as an unsigned number so it's possible to read up to `4GB` of data. 
 
@@ -233,7 +233,7 @@ Wow! This looks so beautiful
 $ 
 ```
 
-Great instead of printing the prompt again, the connection immediately exit after printing the ascii art, this mean we probably did overwrite the return address stored in the stack, thus crashing the binary.
+Great instead of printing the prompt again, the connection immediately exit after printing the ascii art, this means we probably did overwrite the return address stored in the stack, thus crashing the binary.
 
 Using `rabin2` from the [radare2](http://rada.re/r/) suite, we can get some info from the binary:
 
@@ -281,7 +281,7 @@ AAABAACAADAAEAAFAAGAAHAAIAAJAAKAALAAMAANAAOAAPAAQAARAASAATAAUAAVAAWAAXAAYAAZAAaA
 $ 
 ```
 
-Now we can either attach the server to a debugger, configure it to follow child process, and wait for it to crash so we can get the value of `rip` register and calculate the offset, or simply use the `dmesg` command to print info about the last crashes happened in our system. Since I'am lazy, I went for the second approach.
+Now we can either attach the server to a debugger, configure it to follow child process, and wait for it to crash so we can get the value of `rip` register and calculate the offset, or simply use the `dmesg` command to print info about the last crashes happened in our system. Since I'm lazy, I went for the second approach.
 
 ```shell
 $ nc 0 12345
@@ -313,7 +313,7 @@ $ sudo dmesg | tail
 $ 
 ```
 
-Great, at the moment of crash, the instruction pointer was pointing to **0x41754141**. Again using `ragg2` we can calculate the offset.
+Great, at the moment of the crash, the instruction pointer was pointing to **0x41754141**. Again using `ragg2` we can calculate the offset.
 
 ```shell
 $ ragg2 -q 0x41754141
@@ -327,7 +327,7 @@ From `rabin2` output, we already know that the binary's [endianess](https://en.w
 At this step we know that we control the instruction pointer, we also know that the stack is not executable. One way to exploit this is to [return to libc](https://en.wikipedia.org/wiki/Return-to-libc_attack), but since we don't know at what address `libc` is mapped in the virtual memory, we need to leak some addresses. 
 
 Using [ROP](https://en.wikipedia.org/wiki/Return-oriented_programming) we can read data from anywhere, this is done because the function `puts` actually prints bytes from the address pointed by the `rdi` register. So by chaining 
-`pop rdi` and `call puts` gadgets we can mount a read-anywhere attack. In order to calculate `libc` base address we need to read the address of any symbol from it. Reading any symbol from the [GOT](https://en.wikipedia.org/wiki/Global_Offset_Table) table allows us to leak addresses from `libc`, one good candidate is puts' entry in `GOT`, to get its address we can use `objdump -R`:
+`pop rdi` and `call puts` gadgets we can mount a read-anywhere attack. In order to calculate `libc` base address, we need to read the address of any symbol from it. Reading any symbol from the [GOT](https://en.wikipedia.org/wiki/Global_Offset_Table) table allows us to leak addresses from `libc`, one good candidate is `puts` entry in `GOT`, to get its address we can use `objdump -R`:
 
 ```shell
 $ objdump -R server
@@ -351,7 +351,7 @@ $ radare2 server
 [0x00400dc0]> 
 ```
 
-The following python code connect to server, interact with it and then send our rop chain. I'm using [Pwntools](https://github.com/Gallopsled/pwntools) to do this, since it makes network programming much more easy and funny.
+The following python code connects to the server, interact with it and then send our rop chain. I'm using [Pwntools](https://github.com/Gallopsled/pwntools) to do this since it makes network programming much more easy and funny.
 
 ```python
 from pwn import *
@@ -401,7 +401,7 @@ Now we know that the absolute address of `puts` is **0x7feba007c460**, and since
 {{< figure src="/img/34c3-ctf-2017/giftwrapper2-binja-puts.png" class="text-center" >}}
 <br/>
 
-Here it shows that puts' offset within libc is **0x78460**, given this we can calculate libc base address.
+Here it shows that puts' offset within libc is **0x78460**, given this, we can calculate libc base address.
 
 > libc_base = puts absolute address - puts relative offset
 > 

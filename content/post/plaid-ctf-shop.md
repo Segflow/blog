@@ -9,7 +9,7 @@ draft = false
 index = true
 +++
 
-Below you find the full exploit for PlaidCTF pwn200 task. Full write up will follow up.
+Below you find the full exploit for PlaidCTF pwn200 task. The full write up will follow up.
 
 <!--more-->
 
