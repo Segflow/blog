@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: segflow.github.io
+Token: 068aac045fac84e095903b518510866a520d128a7fdb00e8880fc42c4cdc6703
