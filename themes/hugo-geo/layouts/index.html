@@ -9,7 +9,7 @@
 		<h1>{{ .Site.Params.header }}</h1>
 	{{ end }}
 </header>
-{{ $paginator := .Paginate (where .Data.Pages.ByDate.Reverse "Section" "post") }}
+{{ $paginator := .Paginate (where .Site.RegularPages "Type" "post") }}
 {{ range $paginator.Pages }}
 	{{ .Render "summary"}}
 {{ end }}
@@ -17,5 +17,4 @@
 <div class="text-center center-block">
 	{{ template "_internal/pagination.html" . }}
 </div>
-
 {{ partial "footer.html" . }}
