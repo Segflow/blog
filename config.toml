@@ -51,4 +51,8 @@ theme = "hugo-geo"
 	[[params.navlinks]]
 	name = "Posts"
 	url = "post/"
+
+	[[params.navlinks]]
+	name = "Resume"
+	url = "resume.pdf"
 	
