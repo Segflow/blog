@@ -99,14 +99,14 @@ The final SSA form for our `switchImplementation` function looks like this:
 
 The first block is the function epilogue where mainly a stack frame needs to be allocated. The second one is the body, and the final block is the function prologue where the functions need to return to its caller. 
 
-The function body in our case is a simple move instruction which moves 0 to the ~r0 registry. So the function is only returning 0 immediately there is nothing else. To confirm this I generated the SSA for the following function:
+The function body in our case is a simple move instruction which moves 0 to the ~`r0` registry. So the function is only returning 0 immediately there is nothing else. To confirm this I generated the SSA for the following function:
 ```
 func return0() int {
     return 0
 }
 ```
 
-And the final generated code is exactly the same as you can see it [here](/code/go-compiler-optimization/return0-ssa.html). And that's was it's so fast.
+And the final generated code is exactly the same as you can see it [here](/code/go-compiler-optimization/return0-ssa.html). And that's why it's so fast.
 
 ### map based implementation
 
@@ -252,7 +252,7 @@ map[string]int{
 }[aRandomFunc()]
 ```
 
-At compile time, we can if both `right` and `left` nodes are constant, if they are, we see if what are we looking for (the key), is defined in the constant map, and if they are we replace the `INDEXMAP` node in the AST by the value of that key. This will replace all lookups on maps where the map is an `OMAPLIT` and the key is a constant with a constant if possible.
+At compile time, we can check if both `right` and `left` nodes are constant, if they are, we see if what are we looking for (the key), is defined in the constant map, and if it's the case we replace the `INDEXMAP` node in the AST by the value of that key. This will replace all lookups on maps where the map is an `OMAPLIT` and the key is a constant with a constant if possible.
 
 This optimization is applied directly to the AST and not the SSA form. This type of AST optimization is implemented inside the `walk` function. 
 
