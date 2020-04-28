@@ -52,6 +52,9 @@ The `map` based solution felt more readable and maintainable to me but I was cur
 *The code is not in a hot path, and micro-optimizing it is not needed. But still wanted to know what's faster.*
 
 To satisfy my curiosity, I benchmarked both approaches.
+
+{{< gist segflow 431dd47770de0bbcfec6d0f0bcb912b5 >}}
+
 ```
 goos: darwin
 goarch: amd64
