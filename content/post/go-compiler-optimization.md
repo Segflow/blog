@@ -270,3 +270,5 @@ BenchmarkMapImpl-4              1000000000               0.612 ns/op           0
 ## Conclusion
 
 The PR is not merged yet, hopefully soon, it got added to Go 1.15 milestone which should be released in a month.
+
+Huge thanks to everyone in the #compilers channel in [Gophers](https://invite.slack.golangbridge.org/) slack
